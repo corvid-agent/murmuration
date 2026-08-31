@@ -1,0 +1,273 @@
+{
+    "name": "Murmuration",
+    "structs": {},
+    "methods": [
+        {
+            "name": "create",
+            "args": [],
+            "returns": {
+                "type": "void"
+            },
+            "actions": {
+                "create": [
+                    "NoOp"
+                ],
+                "call": []
+            },
+            "readonly": false,
+            "desc": "No-op create. Zero arguments on purpose.\nThe 68-year trap: never take a uint64 create arg that a deploy script might map to the keeper app id. Nothing to pass here; the default quiet window (20000 rounds) is set right here.",
+            "events": [],
+            "recommendations": {}
+        },
+        {
+            "name": "set_keeper",
+            "args": [
+                {
+                    "type": "uint64",
+                    "name": "keeper"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "actions": {
+                "create": [],
+                "call": [
+                    "NoOp"
+                ]
+            },
+            "readonly": false,
+            "desc": "Name the Arcron keeper whose app account may call `tick`.\nCreator-only, one-time. Pass the keeper *application*, not a raw uint64. `tick` authorizes Application(keeper).address - the inner-call sender when Arcron `execute()` inner-calls this app - never itob(keeper.id). Puya lowers the Application param to uint64 in the ABI signature; the compiled selector is set_keeper(uint64)void.",
+            "events": [],
+            "recommendations": {}
+        },
+        {
+            "name": "set_quiet",
+            "args": [
+                {
+                    "type": "uint64",
+                    "name": "quiet_rounds"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "actions": {
+                "create": [],
+                "call": [
+                    "NoOp"
+                ]
+            },
+            "readonly": false,
+            "desc": "Set the quiet window. Owner-only (owner = creator).\nFloor MIN_QUIET_ROUNDS (1000 rounds ~= 47 min): the window must never sit inside the keeper's own cadence.",
+            "events": [],
+            "recommendations": {}
+        },
+        {
+            "name": "join",
+            "args": [
+                {
+                    "type": "pay",
+                    "name": "payment"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            },
+            "actions": {
+                "create": [],
+                "call": [
+                    "NoOp"
+                ]
+            },
+            "readonly": false,
+            "desc": "Join the flock. Anyone may call with a payment attached.\nThe payment must be at least 100,000 microALGO (0.1 ALGO) to the app account. Joining increments the flock, grows the pot by the full payment amount, resets the quiet clock, and makes the sender the bird in line for the pot.",
+            "events": [],
+            "recommendations": {}
+        },
+        {
+            "name": "tick",
+            "args": [],
+            "returns": {
+                "type": "uint64"
+            },
+            "actions": {
+                "create": [],
+                "call": [
+                    "NoOp"
+                ]
+            },
+            "readonly": false,
+            "desc": "Arcron hook. Zero arguments; the selector is the only app arg.\nReturns 1 the round the pot pays out, 0 on every no-work path. FAIL SOFT: after the two authorization asserts nothing here may reject - a failing hook gets exponentially backed off by keeper bots and burns upkeep escrow on retries.\nEmpty flock, still-chatty flock, or empty pot: all return 0. Once `quiet_rounds` pass with no join, the full pot goes to the last joiner via an inner payment whose own fee is 0 - it draws from the group fee pool (keeper bots attach 2,000+ microALGO extra on the outer execution; see README.md).",
+            "events": [],
+            "recommendations": {}
+        },
+        {
+            "name": "status",
+            "args": [],
+            "returns": {
+                "type": "uint64"
+            },
+            "actions": {
+                "create": [],
+                "call": [
+                    "NoOp"
+                ]
+            },
+            "readonly": true,
+            "desc": "Rounds of quiet so far. 0 if the flock is empty.",
+            "events": [],
+            "recommendations": {}
+        }
+    ],
+    "arcs": [
+        22,
+        28
+    ],
+    "desc": "Flock counter with a quiet-round pot, paid by Arcron keepers.\n\n    TestNet only. Unaudited. Not a product.\n    ",
+    "networks": {},
+    "state": {
+        "schema": {
+            "global": {
+                "ints": 5,
+                "bytes": 1
+            },
+            "local": {
+                "ints": 0,
+                "bytes": 0
+            }
+        },
+        "keys": {
+            "global": {
+                "keeper_app": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "a2VlcGVyX2FwcA=="
+                },
+                "flock": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "ZmxvY2s="
+                },
+                "pot": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "cG90"
+                },
+                "last_join_round": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "bGFzdF9qb2luX3JvdW5k"
+                },
+                "quiet_rounds": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMUint64",
+                    "key": "cXVpZXRfcm91bmRz"
+                },
+                "last_joiner": {
+                    "keyType": "AVMString",
+                    "valueType": "AVMBytes",
+                    "key": "bGFzdF9qb2luZXI="
+                }
+            },
+            "local": {},
+            "box": {}
+        },
+        "maps": {
+            "global": {},
+            "local": {},
+            "box": {}
+        }
+    },
+    "bareActions": {
+        "create": [],
+        "call": []
+    },
+    "sourceInfo": {
+        "approval": {
+            "sourceInfo": [
+                {
+                    "pc": [
+                        395
+                    ],
+                    "errorMessage": "Address length is 32 bytes"
+                },
+                {
+                    "pc": [
+                        281
+                    ],
+                    "errorMessage": "Join costs at least 0.1 ALGO"
+                },
+                {
+                    "pc": [
+                        213
+                    ],
+                    "errorMessage": "Keeper already set"
+                },
+                {
+                    "pc": [
+                        215
+                    ],
+                    "errorMessage": "Keeper app required"
+                },
+                {
+                    "pc": [
+                        322
+                    ],
+                    "errorMessage": "Keeper not set"
+                },
+                {
+                    "pc": [
+                        207
+                    ],
+                    "errorMessage": "Only the creator can set the keeper"
+                },
+                {
+                    "pc": [
+                        330
+                    ],
+                    "errorMessage": "Only the keeper app may tick"
+                },
+                {
+                    "pc": [
+                        235
+                    ],
+                    "errorMessage": "Only the owner can set quiet"
+                },
+                {
+                    "pc": [
+                        271
+                    ],
+                    "errorMessage": "Payment must go to the app account"
+                },
+                {
+                    "pc": [
+                        264
+                    ],
+                    "errorMessage": "Payment sender mismatch"
+                },
+                {
+                    "pc": [
+                        241
+                    ],
+                    "errorMessage": "Quiet rounds below floor"
+                },
+                {
+                    "pc": [
+                        288
+                    ],
+                    "errorMessage": "Rekey not allowed"
+                },
+                {
+                    "pc": [
+                        328
+                    ],
+                    "errorMessage": "application exists"
+                },
+                {
+                    "pc": [
+                        292,
+                        334,
+                        417
+                    ],
+                    "errorMessage": "check self.flock exists"
