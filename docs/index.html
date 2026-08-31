@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MURMURATION — quiet-round pot board</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600&family=Bebas+Neue&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="crt" id="crt">
+    <header>
+      <h1>Murmuration</h1>
+      <div class="meta" id="keeper-meta">TestNet · Arcron keeper</div>
+    </header>
+
+    <section class="status-row">
+      <div class="label">Status</div>
+      <div class="flaps big" id="status" aria-label="board status"></div>
+      <div class="meta" id="subhead">seeking</div>
+    </section>
+
+    <section class="board" id="board">
+      <div class="cell">
+        <div class="label">Flock size</div>
+        <div class="flaps" id="stat-flock" aria-label="total joins"></div>
+      </div>
+      <div class="cell">
+        <div class="label">Pot</div>
+        <div class="flaps" id="stat-pot" aria-label="pot in ALGO"></div>
+      </div>
+      <div class="cell">
+        <div class="label">Quiet countdown</div>
+        <div class="flaps" id="stat-quiet" aria-label="rounds of quiet so far vs quiet rounds"></div>
+      </div>
+      <div class="cell">
+        <div class="label">Quiet window</div>
+        <div class="flaps" id="stat-window" aria-label="quiet rounds threshold"></div>
+      </div>
+      <div class="cell">
+        <div class="label">Last joiner</div>
+        <div class="flaps" id="stat-lastjoiner" aria-label="last joiner short address"></div>
+      </div>
+      <div class="cell">
+        <div class="label">Last join round</div>
+        <div class="flaps" id="stat-joinround" aria-label="last join round"></div>
+      </div>
+      <div class="cell">
+        <div class="label">Chain round</div>
+        <div class="flaps" id="stat-round" aria-label="chain last round"></div>
+      </div>
+      <div class="cell">
+        <div class="label">Keeper</div>
+        <div class="flaps" id="stat-keeper" aria-label="keeper app id"></div>
+      </div>
+    </section>
+
+    <p class="notes" id="notes">
+      Anyone can join the flock with 0.1 ALGO or more; every join grows the
+      pot and resets the quiet clock. If no bird joins for
+      <code>quiet_rounds</code>, the next keeper tick pays the whole pot to
+      the last joiner. Once deployed, state is read from the app's global
+      state on the TestNet indexer; the chain is the source of truth.
+      Contract:
+      <a href="https://github.com/corvid-agent/murmuration/blob/main/smart_contracts/murmuration/contract.py">smart_contracts/murmuration/contract.py</a>.
+    </p>
+
+    <footer class="foot">Unaudited. TestNet only. Not deployed. Read-only, no wallet.</footer>
+  </main>
+  <script src="./app.js"></script>
+</body>
+</html>
