@@ -1,0 +1,8 @@
+{
+  "appId": 0,
+  "network": "testnet",
+  "keeperAppId": 769891898,
+  "upkeepId": 0,
+  "interval": 30857,
+  "notes": "not deployed — flock counter with a quiet-round pot, tick() via arcron keeper"
+}
